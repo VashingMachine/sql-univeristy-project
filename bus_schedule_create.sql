@@ -29,17 +29,17 @@ CREATE TABLE Buses (
 	name nvarchar(45) NOT NULL,
 	brand nvarchar(45) NOT NULL,
 	category_id INT NOT NULL,
-	breakdown_id INT NOT NULL
+	breakdown_id INT NULL
 )
 GO
 CREATE TABLE Station (
 	id INT PRIMARY KEY IDENTITY(1,1),
-	name nvarchar(45) NOT NULL
+	name nvarchar(45) NOT NULL UNIQUE
 )
 GO
 CREATE TABLE Lines (
 	id INT PRIMARY KEY IDENTITY(1,1),
-	name nvarchar(10) NOT NULL
+	name nvarchar(10) NOT NULL UNIQUE
 )
 GO
 CREATE TABLE [Line Routes] (
@@ -59,7 +59,7 @@ CREATE TABLE Schedule (
 GO
 CREATE TABLE [Bus Categories] (
 	id INT PRIMARY KEY IDENTITY(1,1),
-	name nvarchar(45) NOT NULL,
+	name nvarchar(45) UNIQUE NOT NULL,
 	description nvarchar(200) NOT NULL
 )
 GO

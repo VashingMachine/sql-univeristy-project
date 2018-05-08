@@ -1,0 +1,2 @@
+USE dkwiatkowski;
+CREATE VIEW 
