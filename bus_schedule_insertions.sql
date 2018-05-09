@@ -28,7 +28,7 @@ EXEC add_station_to_route '2', 'H', 30;
 EXEC add_station_to_route '3', 'A', 0;
 EXEC add_station_to_route '3', 'F', 120;
 
-EXEC add_station_to_route '4', 'H', 20;
+EXEC add_station_to_route '4', 'H', 0;
 EXEC add_station_to_route '4', 'G', 5;
 EXEC add_station_to_route '4', 'D', 20;
 EXEC add_station_to_route '4', 'C', 5;
@@ -38,8 +38,6 @@ INSERT INTO [Bus Categories] VALUES
 ('Niskopod³ogowy', 'Ten autobus jest dostosowany dla niepe³nosprawnych'),
 ('Wysokopod³ogowy', 'Ten autobus nie jest dostosowany dla niepe³nosprawnych')
 
-SELECT * FROM [Bus Categories]
-
 INSERT INTO Buses VALUES
 ( 'Kacper', 'Volkswagen', (SELECT id FROM [Bus Categories] WHERE [name] = 'Niskopod³ogowy'), NULL),
 ( 'Maria', 'Ford', (SELECT id FROM [Bus Categories] WHERE [name] = 'Wysokopod³ogowy'), NULL),
@@ -47,8 +45,10 @@ INSERT INTO Buses VALUES
 ( 'Kopiec', 'Kamieñ', (SELECT id FROM [Bus Categories] WHERE [name] = 'Niskopod³ogowy'), NULL),
 ( 'Mercedes', 'Damian', (SELECT id FROM [Bus Categories] WHERE [name] = 'Wysokopod³ogowy'), NULL)
 
-INSERT INTO Schedule VALUES
-()
+INSERT INTO Schedule (driver_id, line_id, bus_id, start_time) VALUES
+(1, 1, 1, '7:30'), (2, 1, 3, '6:40'), (3, 3, 5, '2:14')
+
+
 
 
 

@@ -93,4 +93,3 @@ ALTER TABLE Schedule ADD FOREIGN KEY (line_id) REFERENCES [Lines](id)
 GO
 ALTER TABLE Schedule ADD FOREIGN KEY (bus_id) REFERENCES Buses(id)
 GO
-

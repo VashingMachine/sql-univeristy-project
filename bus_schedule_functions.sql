@@ -70,7 +70,39 @@ BEGIN
 END
 GO
 
+CREATE FUNCTION route_distance (@line_id INT)
+RETURNS INT
+BEGIN
+	RETURN (SELECT SUM(delta_time) FROM [Line Routes] WHERE @line_id = line_id)
+END
+GO
 
+CREATE FUNCTION is_driver_busy
+(@driver_id INT, @time TIME)
+RETURNS BIT
+BEGIN
+	DECLARE @last_route_time TABLE (line_id INT NOT NULL, end_time TIME NOT NULL, start_time TIME NOT NULL);
+	INSERT @last_route_time SELECT TOP(1) line_id, DATEADD(minute, dbo.route_distance(line_id), start_time) AS end_time, start_time FROM Schedule WHERE start_time < @time ORDER BY start_time DESC;
+	IF EXISTS (SELECT * FROM @last_route_time WHERE @time >= start_time AND @time <= end_time) RETURN 1
+	ELSE RETURN 0 
+	RETURN 0
+END
+GO
+
+CREATE FUNCTION schedule_for_station (@station_id INT)
+RETURNS @schedule TABLE
+(
+	line_id INT NOT NULL,
+	arrival_time TIME NOT NULL
+) AS
+BEGIN
+	INSERT @schedule
+	SELECT S.line_id, 
+	DATEADD(minute, (SELECT SUM(delta_time) FROM [Line Routes] WHERE line_id = S.line_id AND order_index <= (SELECT order_index FROM [Line Routes] WHERE line_id = S.line_id AND station_id = @station_id)), start_time) as arrival_time
+	FROM Schedule S WHERE line_id IN (SELECT DISTINCT line_id FROM [Line Routes] WHERE station_id = @station_id) RETURN
+	
+END
+GO
 
 
    
