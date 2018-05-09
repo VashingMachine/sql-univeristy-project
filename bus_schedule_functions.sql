@@ -82,7 +82,7 @@ CREATE FUNCTION is_driver_busy
 RETURNS BIT
 BEGIN
 	DECLARE @last_route_time TABLE (line_id INT NOT NULL, end_time TIME NOT NULL, start_time TIME NOT NULL);
-	INSERT @last_route_time SELECT TOP(1) line_id, DATEADD(minute, dbo.route_distance(line_id), start_time) AS end_time, start_time FROM Schedule WHERE start_time < @time ORDER BY start_time DESC;
+	INSERT @last_route_time SELECT TOP(1) line_id, DATEADD(minute, dbo.route_distance(line_id), start_time) AS end_time, start_time FROM [Active Schedule] WHERE start_time < @time AND driver_id = @driver_id ORDER BY start_time DESC;
 	IF EXISTS (SELECT * FROM @last_route_time WHERE @time >= start_time AND @time <= end_time) RETURN 1
 	ELSE RETURN 0 
 	RETURN 0
@@ -103,6 +103,7 @@ BEGIN
 	
 END
 GO
+
 
 
    
