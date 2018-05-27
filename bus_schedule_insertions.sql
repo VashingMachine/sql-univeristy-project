@@ -59,5 +59,3 @@ INSERT INTO Schedule (driver_id, line_id, bus_id, start_time) VALUES
 
 
 
-
-

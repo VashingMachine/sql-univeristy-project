@@ -89,6 +89,15 @@ BEGIN
 END
 GO
 
+CREATE FUNCTION is_driver_license_active
+(@driver_id INT, @time DATE)
+RETURNS BIT
+BEGIN
+	IF EXISTS (SELECT * FROM Drivers D JOIN Licenses L ON D.licence_id = L.id WHERE D.id = @driver_id AND L.expiration_date > @time) RETURN 1;
+	RETURN 0;
+END
+GO
+
 CREATE FUNCTION schedule_for_station (@station_id INT)
 RETURNS @schedule TABLE
 (
@@ -103,6 +112,8 @@ BEGIN
 	
 END
 GO
+
+
 
 
 
