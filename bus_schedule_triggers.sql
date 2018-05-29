@@ -23,3 +23,13 @@ BEGIN
 		ROLLBACK;
 	END
 END
+GO
+
+CREATE TRIGGER delete_station ON Station 
+INSTEAD OF DELETE AS
+BEGIN
+	RAISERROR('Use procedure delete_station instead', 16, 1);
+END
+
+
+

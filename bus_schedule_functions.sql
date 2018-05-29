@@ -42,6 +42,26 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE delete_station_proc
+	@station_id INT
+AS
+BEGIN
+	EXEC('DISABLE TRIGGER delete_station ON Station');
+
+	WITH CTE AS (
+		SELECT * FROM [Line Routes] LR WHERE line_id in (SELECT DISTINCT line_id FROM [Line Routes] WHERE station_id = @station_id)
+		AND order_index > (SELECT order_index FROM [Line Routes] LRR WHERE LRR.line_id = LR.line_id AND station_id = @station_id)
+	)
+	UPDATE CTE SET order_index = order_index - 1;
+
+	DELETE FROM [Line Routes] WHERE station_id = @station_id;
+
+	DELETE FROM Station WHERE id = @station_id;
+
+	EXEC('ENABLE TRIGGER delete_station ON Station');
+END
+GO
+
 CREATE FUNCTION route_from_a_to_b
 (@station_a nvarchar(45), @station_b nvarchar(45))
 RETURNS @traces TABLE 
@@ -112,6 +132,7 @@ BEGIN
 	
 END
 GO
+
 
 
 
