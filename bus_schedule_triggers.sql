@@ -22,14 +22,22 @@ BEGIN
 		RAISERROR('One of the added drivers is actualy busy in given time', 16, 1);
 		ROLLBACK;
 	END
+
+	IF EXISTS (SELECT * FROM inserted WHERE dbo.working_hours(driver_id) > '8:00')
+	RAISERROR('One of the added drivers is going to work more than 8 hours in schedule', 16, 2);
 END
 GO
+
 
 CREATE TRIGGER delete_station ON Station 
 INSTEAD OF DELETE AS
 BEGIN
 	RAISERROR('Use procedure delete_station instead', 16, 1);
 END
+
+
+
+
 
 
 

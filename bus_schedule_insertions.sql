@@ -46,10 +46,11 @@ INSERT INTO Buses VALUES
 ( 'Mercedes', 'Damian', (SELECT id FROM [Bus Categories] WHERE [name] = 'Wysokopod³ogowy'), NULL)
 
 INSERT INTO Schedule (driver_id, line_id, bus_id, start_time) VALUES
-(1, 1, 1, '7:30'), (2, 2, 3, '8:10')
+(1, 1, 1, '7:30'), (2, 2, 3, '8:10'), (1, 2, 3, '18:40')
 
 
-
+INSERT INTO Schedule (driver_id, line_id, bus_id, start_time) VALUES
+ (1, 2, 3, '10:40')
 
 
 

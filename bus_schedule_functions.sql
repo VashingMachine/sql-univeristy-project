@@ -133,6 +133,13 @@ BEGIN
 END
 GO
 
+CREATE FUNCTION working_hours (@driver_id INT)
+RETURNS TIME
+BEGIN
+	RETURN (SELECT DATEADD(minute,  SUM(dbo.route_distance(line_id)), '0:00' ) FROM [Active Schedule] WHERE @driver_id = driver_id)
+END
+GO
+
 
 
 
