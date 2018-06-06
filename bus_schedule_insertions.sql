@@ -12,27 +12,27 @@ INSERT INTO Station VALUES
 INSERT INTO Lines VALUES
 ('1'), ('2'), ('3'), ('4')
 
-EXEC add_station_to_route '1', 'A', 0;
-EXEC add_station_to_route '1', 'C', 10;
-EXEC add_station_to_route '1', 'G', 20;
-EXEC add_station_to_route '1', 'D', 20;
+EXEC add_station_to_route 1, 1, 0;
+EXEC add_station_to_route 1, 3, 10;
+EXEC add_station_to_route 1, 7, 20;
+EXEC add_station_to_route 1, 4, 20;
 
-EXEC add_station_to_route '2', 'A', 0;
-EXEC add_station_to_route '2', 'C', 10;
-EXEC add_station_to_route '2', 'G', 20;
-EXEC add_station_to_route '2', 'J', 5;
-EXEC add_station_to_route '2', 'K', 20;
-EXEC add_station_to_route '2', 'F', 5;
-EXEC add_station_to_route '2', 'H', 30;
+EXEC add_station_to_route 2, 1, 0;
+EXEC add_station_to_route 2, 3, 10;
+EXEC add_station_to_route 2, 8, 20;
+EXEC add_station_to_route 2, 10, 5;
+EXEC add_station_to_route 2, 7, 20;
+EXEC add_station_to_route 2, 6, 5;
+EXEC add_station_to_route 2, 11, 30;
 
-EXEC add_station_to_route '3', 'A', 0;
-EXEC add_station_to_route '3', 'F', 120;
+EXEC add_station_to_route 3, 1, 0;
+EXEC add_station_to_route 3, 6, 120;
 
-EXEC add_station_to_route '4', 'H', 0;
-EXEC add_station_to_route '4', 'G', 5;
-EXEC add_station_to_route '4', 'D', 20;
-EXEC add_station_to_route '4', 'C', 5;
-EXEC add_station_to_route '4', 'A', 30;
+EXEC add_station_to_route 4, 8, 0;
+EXEC add_station_to_route 4, 7, 5;
+EXEC add_station_to_route 4, 4, 20;
+EXEC add_station_to_route 4, 3, 5;
+EXEC add_station_to_route 4, 1, 30;
 
 INSERT INTO [Bus Categories] VALUES 
 ('Niskopod³ogowy', 'Ten autobus jest dostosowany dla niepe³nosprawnych'),
@@ -52,6 +52,10 @@ INSERT INTO Schedule (driver_id, line_id, bus_id, start_time) VALUES
 INSERT INTO Schedule (driver_id, line_id, bus_id, start_time) VALUES
  (1, 2, 3, '10:40')
 
+ INSERT INTO Breakdowns (description, type) VALUES
+ ('Spali³ siê', 'bardzo Ÿle'), ('Podwozie uszkodzone', 'mo¿e byæ')
+
+ UPDATE Buses SET breakdown_id = 1 WHERE id = 5 
 
 
 

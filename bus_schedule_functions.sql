@@ -23,19 +23,14 @@ BEGIN
 END
 GO
 CREATE PROCEDURE add_station_to_route
-	@route_name nvarchar(10),
-	@station nvarchar(45),
+	@line_id INT,
+	@station_id INT,
 	@delta_time INT,
 	@order_index INT = NULL
 AS
 BEGIN
 	DECLARE @index INT;
-	DECLARE @line_id INT;
-	DECLARE @station_id INT;
-
-	SET @index = COALESCE(@order_index, (SELECT MAX( LR.order_index ) + 1 FROM [Line Routes] LR JOIN Lines L ON L.id = LR.line_id WHERE @route_name = L.name), 0)
-	SET @line_id = (SELECT id FROM Lines WHERE @route_name = name)
-	SET @station_id = (SELECT id FROM Station WHERE @station = name)
+	SET @index = COALESCE(@order_index, (SELECT MAX( LR.order_index ) + 1 FROM [Line Routes] LR JOIN Lines L ON L.id = LR.line_id WHERE @line_id = L.id), 0)
 
 	UPDATE [Line Routes] SET order_index = order_index + 1 WHERE order_index >= @order_index
 	INSERT INTO [Line Routes] VALUES (@station_id, @line_id, @index, @delta_time)
@@ -59,6 +54,14 @@ BEGIN
 	DELETE FROM Station WHERE id = @station_id;
 
 	EXEC('ENABLE TRIGGER delete_station ON Station');
+END
+GO
+
+CREATE PROCEDURE breakdown_check
+AS
+BEGIN
+	SELECT COUNT(*) as [Broken Buses], (SELECT COUNT(*) FROM Buses WHERE category_id = B.category_id) as [All of the Category], category_id FROM Buses B JOIN [Bus Categories] BS ON BS.id = B.category_id WHERE breakdown_id IS NOT NULL GROUP BY category_id
+	SELECT BR.type as Type, COUNT(*) AS Broken FROM Buses BS JOIN Breakdowns BR ON BR.id = BS.breakdown_id GROUP BY BR.type
 END
 GO
 
@@ -139,6 +142,21 @@ BEGIN
 	RETURN (SELECT DATEADD(minute,  SUM(dbo.route_distance(line_id)), '0:00' ) FROM [Active Schedule] WHERE @driver_id = driver_id)
 END
 GO
+
+CREATE FUNCTION schedule_for_line (@line_id INT, @start_time TIME)
+RETURNS @schedule TABLE
+(
+	station_id INT NOT NULL,
+	arrival_time TIME
+) AS 
+BEGIN
+	INSERT @schedule
+	SELECT station_id, DATEADD(minute,  (SELECT SUM(delta_time) FROM [Line Routes] LRR WHERE LRR.line_id = LR.line_id AND LRR.order_index <= LR.order_index), 
+	(SELECT TOP 1 start_time FROM Schedule WHERE @line_id = line_id AND start_time >= @start_time) ) 
+	FROM [Line Routes] LR WHERE line_id = @line_id AND EXISTS (SELECT * FROM Schedule WHERE start_time >= @start_time AND line_id = @line_id) RETURN
+END
+GO
+
 
 
 

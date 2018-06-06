@@ -8,7 +8,7 @@ BEGIN
 	DELETE FROM Addresses WHERE id IN (SELECT address_id FROM deleted);
 	IF @@ERROR = 0
 	BEGIN 
-		RAISERROR('Something went wrond with deleting driver',16,1); 
+		RAISERROR('Something went wrond with deleting drivers',16,1); 
 		ROLLBACK;
 	END 
 END
@@ -34,10 +34,29 @@ INSTEAD OF DELETE AS
 BEGIN
 	RAISERROR('Use procedure delete_station instead', 16, 1);
 END
+GO
+
+CREATE TRIGGER add_to_routes ON [Line Routes]
+INSTEAD OF INSERT AS
+BEGIN
+	DECLARE inserted_cursosr CURSOR LOCAL FOR SELECT * FROM [Line Routes];
+	DECLARE @station_id INT,
+			@line_id INT,
+			@order_index INT,
+			@delta_time INT;
+	OPEN inserted_cursosr;
+	FETCH NEXT FROM inserted_cursosr INTO @station_id, @line_id, @order_index, @delta_time;
+	WHILE (@@FETCH_STATUS = 0)
+	BEGIN
+		EXEC add_station_to_route @line_id, @station_id, @delta_time, @order_index;
+		FETCH NEXT FROM inserted_cursosr INTO @station_id, @line_id, @order_index, @delta_time;
+	END
+END
+GO 
 
 
 
-
+SELECT * FROM [Line Routes]
 
 
 
