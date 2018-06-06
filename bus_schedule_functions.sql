@@ -11,6 +11,8 @@ CREATE PROCEDURE add_driver
 	@creation_date date
 AS
 BEGIN
+	BEGIN TRAN;
+	BEGIN TRY
 	INSERT INTO Licenses VALUES (@expiration_date, @creation_date);
 	DECLARE @license_id INT;
 	SET @license_id = @@IDENTITY;
@@ -20,6 +22,20 @@ BEGIN
 	SET @address_id = @@IDENTITY;
 
 	INSERT INTO Drivers VALUES (@name, @surname, @license_id, @address_id);
+	END TRY
+
+	BEGIN CATCH
+		SELECT
+			ERROR_NUMBER() AS ErrorNumber,
+			ERROR_SEVERITY() AS ErrorSeverity,
+			ERROR_STATE() as ErrorState,
+			ERROR_LINE () as ErrorLine,
+			ERROR_PROCEDURE() as ErrorProcedure,
+			ERROR_MESSAGE() as ErrorMessage;
+			IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+	END CATCH
+
+	IF @@TRANCOUNT > 0 COMMIT TRANSACTION;
 END
 GO
 CREATE PROCEDURE add_station_to_route
@@ -36,7 +52,6 @@ BEGIN
 	INSERT INTO [Line Routes] VALUES (@station_id, @line_id, @index, @delta_time)
 END
 GO
-
 CREATE PROCEDURE delete_station_proc
 	@station_id INT
 AS
@@ -56,7 +71,6 @@ BEGIN
 	EXEC('ENABLE TRIGGER delete_station ON Station');
 END
 GO
-
 CREATE PROCEDURE breakdown_check
 AS
 BEGIN
@@ -64,7 +78,6 @@ BEGIN
 	SELECT BR.type as Type, COUNT(*) AS Broken FROM Buses BS JOIN Breakdowns BR ON BR.id = BS.breakdown_id GROUP BY BR.type
 END
 GO
-
 CREATE FUNCTION route_from_a_to_b
 (@station_a nvarchar(45), @station_b nvarchar(45))
 RETURNS @traces TABLE 
@@ -92,26 +105,23 @@ BEGIN
 
 END
 GO
-
 CREATE FUNCTION route_distance (@line_id INT)
 RETURNS INT
 BEGIN
 	RETURN (SELECT SUM(delta_time) FROM [Line Routes] WHERE @line_id = line_id)
 END
 GO
-
 CREATE FUNCTION is_driver_busy
 (@driver_id INT, @time TIME)
 RETURNS BIT
 BEGIN
-	DECLARE @last_route_time TABLE (line_id INT NOT NULL, end_time TIME NOT NULL, start_time TIME NOT NULL);
+	DECLARE @last_route_time TABLE (line_id INT NULL, end_time TIME NULL, start_time TIME NULL);
 	INSERT @last_route_time SELECT TOP(1) line_id, DATEADD(minute, dbo.route_distance(line_id), start_time) AS end_time, start_time FROM [Active Schedule] WHERE start_time < @time AND driver_id = @driver_id ORDER BY start_time DESC;
 	IF EXISTS (SELECT * FROM @last_route_time WHERE @time >= start_time AND @time <= end_time) RETURN 1
 	ELSE RETURN 0 
 	RETURN 0
 END
 GO
-
 CREATE FUNCTION is_driver_license_active
 (@driver_id INT, @time DATE)
 RETURNS BIT
@@ -120,7 +130,6 @@ BEGIN
 	RETURN 0;
 END
 GO
-
 CREATE FUNCTION schedule_for_station (@station_id INT)
 RETURNS @schedule TABLE
 (
@@ -135,14 +144,12 @@ BEGIN
 	
 END
 GO
-
 CREATE FUNCTION working_hours (@driver_id INT)
 RETURNS TIME
 BEGIN
 	RETURN (SELECT DATEADD(minute,  SUM(dbo.route_distance(line_id)), '0:00' ) FROM [Active Schedule] WHERE @driver_id = driver_id)
 END
 GO
-
 CREATE FUNCTION schedule_for_line (@line_id INT, @start_time TIME)
 RETURNS @schedule TABLE
 (
