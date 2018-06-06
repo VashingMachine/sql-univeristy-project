@@ -2,6 +2,14 @@
 
 Jest to prosta baza przygotowana do zarządzania pracownikami, autobusami, liniami komunikacyjnymi oraz rozkładem jazdy autobusów dla każdego dnia.
 
+Założenia są takie:
+
+* autobusy się psują
+* ludzie nie chorują
+* każdy dzień jest ten sam dla naszego systemu komunikacji miejskiej
+
+Baza jest skierowana głównie dla pracowników administracji systemu. Pozwala im nadzorować ilośc godzin pracy kierowców, sprawdzać kiedy kończą im się licencję (oczywiście zakładamy że istnieje tylko jedna licencja na jednogo kierowce). Administracja dzieki tej bazy może łatwo stworzyć rozkłąd jazdy dla każdego przystanka lub dla poszczególnej lini. Możliwe też jest sprawdzenie najkrótszej bezpośredniej trasy pomiędzy przystankami, w przyszłości może to pozwolić na stworzenie aplikacji dla pasażerów.
+
 # Tabele
 
 W bazie znajduje się 10 tabel:
