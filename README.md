@@ -32,3 +32,12 @@ W bazie znajduje się 10 tabel:
 * `schedule_for_station` - wyświetla rozkład jazdy autobusów dla konkretnego przystanku
 * `working_hours` - zwraca czas pracy danego kierowcy
 * `schedule_for_line` - rozkład jazdy dla konkretnej linii
+
+# Widoki
+* `Active Schedule` - tabela Schedule, tyle że z wykluczonymi autobusami zepsutymi
+* `Licenses Warnings` - wyświetla imię i nazwiska kierowców, których licencja kończy się w obecnym roku (lub skończyła się)
+* `Drivers Working Hours` - suma godzin pracy każdego kierowcy
+
+# Przykładowe zapytania
+
+Zapytania, które uzupełniają bazę znajdują się [tutaj](/bus_schedule_insertions.sql)
